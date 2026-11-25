@@ -603,7 +603,8 @@ func mergeInfoPlists(_ candidates: [URL], warnOnDivergence: Bool) -> [String: An
     return merged
 }
 
-let infoPlist = findInfoPlist()
+// Fork: the permissions are fixed below instead of derived from the app's Info.plist keys and environment
+// variables, so findInfoPlist() isn't called.
 
 /// Every macro this manifest resolved, for PERMISSION_HANDLER_VERBOSE.
 var resolvedMacros: [String: String] = [:]
@@ -615,17 +616,20 @@ var resolvedMacros: [String: String] = [:]
 /// how a variable gets cleared, and reading that as "enabled" would be the
 /// opposite of what was asked.
 func enabled(_ envKey: String, plistKeys: String..., defaultValue: String = "0") -> String {
-    let value: String
-    if let val = env[envKey]?.trimmingCharacters(in: .whitespaces), !val.isEmpty {
-        value = val == "0" ? "0" : "1"
-    } else if plistKeys.contains(where: { infoPlist[$0] != nil }) {
-        value = "1"
-    } else {
-        value = defaultValue
-    }
+    let value = forkEnabledPermissions.contains(envKey) ? "1" : "0"
     resolvedMacros[envKey] = value
     return value
 }
+
+/// Fork: the permissions the app compiles in, the same as its Podfile set under CocoaPods
+/// (GCC_PREPROCESSOR_DEFINITIONS PERMISSION_CAMERA=1, PERMISSION_MICROPHONE=1, PERMISSION_PHOTOS=1). Every other
+/// permission is compiled out, whatever the app's Info.plist declares: in particular PERMISSION_LOCATION, whose
+/// code calls requestAlwaysAuthorization, and PERMISSION_NOTIFICATIONS, which CocoaPods left at its header default 0.
+let forkEnabledPermissions: Set<String> = [
+    "PERMISSION_CAMERA",
+    "PERMISSION_MICROPHONE",
+    "PERMISSION_PHOTOS",
+]
 
 let permissionDefines: [CSetting] = [
     // dart: PermissionGroup.calendar (< iOS 17)

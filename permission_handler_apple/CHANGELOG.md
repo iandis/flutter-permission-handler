@@ -1,3 +1,7 @@
+## 9.6.1 (fork: fixed permissions)
+
+* Under Swift Package Manager, compiles in only the camera, microphone and photos permissions, as the app's `Podfile` did under CocoaPods, instead of deriving them from the app's `Info.plist` and environment variables.
+
 ## 9.6.1
 
 - Fixes small mistakes in the README.md documentation.
