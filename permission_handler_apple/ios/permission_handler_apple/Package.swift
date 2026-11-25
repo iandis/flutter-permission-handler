@@ -625,6 +625,7 @@ func enabled(_ envKey: String, plistKeys: String..., defaultValue: String = "0")
 /// (GCC_PREPROCESSOR_DEFINITIONS PERMISSION_CAMERA=1, PERMISSION_MICROPHONE=1, PERMISSION_PHOTOS=1). Every other
 /// permission is compiled out, whatever the app's Info.plist declares: in particular PERMISSION_LOCATION, whose
 /// code calls requestAlwaysAuthorization, and PERMISSION_NOTIFICATIONS, which CocoaPods left at its header default 0.
+/// Why a fork rather than upstream's environment variables: README.md, "About this fork".
 let forkEnabledPermissions: Set<String> = [
     "PERMISSION_CAMERA",
     "PERMISSION_MICROPHONE",

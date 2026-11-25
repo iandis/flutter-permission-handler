@@ -4,6 +4,19 @@
 
 The official iOS implementation of the [permission_handler](https://pub.dev/packages/permission_handler) plugin by [Baseflow](https://baseflow.com).
 
+## About this fork
+
+This branch is permission_handler_apple 9.6.1 with one change for Swift Package Manager: `Package.swift` compiles in
+only the camera, microphone and photos permissions, the ones our app's `Podfile` enabled under CocoaPods. Upstream
+turns permissions on from the app's `Info.plist` keys, which for our app would also compile in location (its code
+calls `requestAlwaysAuthorization`, so App Store Connect asks for `NSLocationAlwaysAndWhenInUseUsageDescription`),
+notifications and speech recognition.
+
+Why a fork: upstream can turn those off only through environment variables at build time. That would mean setting
+them on Codemagic and on every developer's machine, adding a build check that catches a build without them, and
+telling the team about both. The fork fixes the list once, in the code, for every build, and leaves out code the app
+never uses.
+
 ## Usage
 
 Since version 9.1.0 of the [permission_handler](https://pub.dev/packages/permission_handler) plugin this is the endorsed iOS implementation. This means it will automatically be added to your dependencies when you depend on `permission_handler: ^9.1.0` in your applications pubspec.yaml.
